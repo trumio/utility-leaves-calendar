@@ -1,7 +1,9 @@
-import { LeavesCalendar } from '../core/LeavesCalendar'
+import LeavesCalendar from '../core/LeavesCalendar';
 
 export default function Home() {
   return (
-    <LeavesCalendar />
-  )
+    <div className="flex flex-col h-screen">
+      <LeavesCalendar />
+    </div>
+  );
 }
