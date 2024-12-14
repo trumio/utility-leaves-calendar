@@ -34,18 +34,26 @@ const LeavesCalendar: FC = () => {
       .sort()
       .at(-1) ?? new Date().getFullYear();
 
+  const fetchLeaves = async () => {
+    setIsLoading(true);
+    const username = localStorage.getItem('username');
+    const password = localStorage.getItem('password');
+
+    if (!username || !password) {
+      throw new Error('No username or password found');
+    }
+
+    try {
+      const formattedLeaves = await getLeaves(username, password);
+      setLeaves(formattedLeaves);
+    } catch (error) {
+      console.error('Error fetching leaves:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchLeaves = async () => {
-      setIsLoading(true);
-      try {
-        const formattedLeaves = await getLeaves();
-        setLeaves(formattedLeaves);
-      } catch (error) {
-        console.error('Error fetching leaves:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchLeaves();
   }, []);
 

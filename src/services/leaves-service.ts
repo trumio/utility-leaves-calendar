@@ -6,8 +6,14 @@ import axios from 'axios';
  * @returns Promise containing the leave data response
  * @throws Error if the API request fails
  */
-export const getLeaves = async () => {
+export const getLeaves = async (username: string, password: string) => {
   try {
+    const params = new URLSearchParams({
+      sheetName: 'DB',
+      username: username,
+      password: password,
+    });
+
     const response = await axios({
       method: 'post',
       url: LEAVES_API_URL,
@@ -15,9 +21,7 @@ export const getLeaves = async () => {
         'Content-Type': 'application/x-www-form-urlencoded',
         Accept: 'application/json',
       },
-      data: new URLSearchParams({
-        sheetName: 'DB',
-      }).toString(),
+      data: params,
     });
 
     const formattedLeaves = response.data.data.map((rawLeave: any, index: number) => ({
