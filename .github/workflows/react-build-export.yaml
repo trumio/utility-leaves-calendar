@@ -6,13 +6,13 @@ on:
 
 jobs:
   build-and-export:
-    name: Build and export the sample site to the `sample-site-build` branch
+    name: Build and export the site to the `build` branch
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v3
       - name: Build and export with the latest action rev
-        uses: praneeth-rdy/react-build-export-action@node-v20
+        uses: praneeth-rdy/static-build-export-action@node-v20
         env:
           PROJECT_DIR: .
           BUILD_DIR: dist
