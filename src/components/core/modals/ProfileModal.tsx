@@ -10,8 +10,21 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { DateTime } from 'luxon';
-import { CalendarIcon, UserCircle, Mail, Building2, UserRound, CalendarDays, FileText, Clock, Tag } from 'lucide-react';
+import {
+  CalendarIcon,
+  UserCircle,
+  Mail,
+  Building2,
+  UserRound,
+  CalendarDays,
+  FileText,
+  Clock,
+  Tag,
+  ExternalLinkIcon,
+} from 'lucide-react';
 import GenericModal from './GenericModal';
+import { LEAVES_FORM_URL } from '@/static/api';
+import takeABreakImage from '@/assets/images/take-break.webp';
 
 enum Department {
   Engineering = 'Engineering',
@@ -179,6 +192,10 @@ export default function ProfileModal(props: ProfileModalProps) {
   const endDate = form.getValues('leaveEndDate');
   const isSameDay = startDate && endDate && DateTime.fromJSDate(startDate).hasSame(DateTime.fromJSDate(endDate), 'day');
 
+  const openMicrosoftLeavesForm = () => {
+    window.open(LEAVES_FORM_URL, '_blank');
+  };
+
   return (
     <GenericModal
       className="w-full max-w-[90vw] sm:max-w-[500px] outline-none bg-white dark:bg-zinc-900"
@@ -187,6 +204,20 @@ export default function ProfileModal(props: ProfileModalProps) {
     >
       <div className="p-4 sm:p-6 overflow-y-auto overflow-x-hidden max-h-[90vh]">
         <div className="mb-8 text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Planning a Leave?</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Apply for a new leave here</p>
+          <img src={takeABreakImage} alt="Take a break" className="w-full h-auto mt-4" />
+        </div>
+        <div className="flex flex-row gap-2 justify-end">
+          <Button variant="outline" onClick={onLogout}>
+            Logout
+          </Button>
+          <Button onClick={openMicrosoftLeavesForm}>
+            Apply for Leave <ExternalLinkIcon className="w-4 h-4" />
+          </Button>
+        </div>
+
+        {/* <div className="mb-8 text-center">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Profile Settings</h1>
           <p className="mt-2 text-sm text-muted-foreground">Update your profile information for leave applications</p>
         </div>
@@ -501,18 +532,18 @@ export default function ProfileModal(props: ProfileModalProps) {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              <Button type="submit" className="flex-1" disabled={!isValid}>
-                Apply Leaves
+            <Button type="button" variant="destructive" onClick={onLogout} className="flex-1">
+                Logout
               </Button>
               <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
                 Reset Form
               </Button>
-              <Button type="button" variant="destructive" onClick={onLogout} className="flex-1">
-                Logout
+              <Button type="submit" className="flex-1" disabled={!isValid}>
+                Apply Leaves
               </Button>
             </div>
           </form>
-        </Form>
+        </Form> */}
       </div>
     </GenericModal>
   );

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Login from '../pages/Login';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import ProfileModal from './modals/ProfileModal';
+import { Button } from '../ui/button';
+import { Menu } from 'lucide-react';
 
 export default function AccessWrapper(props: AccessWrapperProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -14,6 +16,7 @@ export default function AccessWrapper(props: AccessWrapperProps) {
   const logout = () => {
     localStorage.clear();
     setIsAuthenticated(false);
+    closeProfileModal();
   };
 
   const openProfileModal = () => {
@@ -40,10 +43,13 @@ export default function AccessWrapper(props: AccessWrapperProps) {
   return (
     <div className="relative">
       <div className="absolute top-2.5 sm:top-3.5 right-4 sm:right-24 z-50 cursor-pointer">
-        <Avatar className="size-8" onClick={openProfileModal}>
+        {/* <Avatar className="size-8" onClick={openProfileModal}>
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>Profile</AvatarFallback>
-        </Avatar>
+        </Avatar> */}
+        <Button variant="outline" onClick={openProfileModal}>
+          <Menu className="w-4 h-4" />
+        </Button>
       </div>
       {props.children}
       <ProfileModal isOpen={isProfileModalOpen} onClose={closeProfileModal} onLogout={logout} />
