@@ -31,8 +31,11 @@ export default function AdditionalInfoModal(props: AdditionalInfoModalProps) {
                 <div className="flex flex-row items-center gap-x-4">
                   <h1 className="text-base font-medium">{leave.name}</h1>
                   <div className="flex flex-row items-center gap-x-2 text-sm font-normal">
-                    ({formatEpochToHumanReadable(dateToEpoch(leave.startAt))} -{' '}
-                    {formatEpochToHumanReadable(dateToEpoch(leave.endAt))})
+                    (
+                    {leave.startAt.getTime() === leave.endAt.getTime()
+                      ? formatEpochToHumanReadable(dateToEpoch(leave.startAt))
+                      : `${formatEpochToHumanReadable(dateToEpoch(leave.startAt))} - ${formatEpochToHumanReadable(dateToEpoch(leave.endAt))}`}
+                    )
                   </div>
                   <div
                     className="text-xs text-white rounded-md px-2 py-0.5"
