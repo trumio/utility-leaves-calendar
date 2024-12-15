@@ -39,8 +39,8 @@ export default function AccessWrapper(props: AccessWrapperProps) {
 
   return (
     <div className="relative">
-      <div className="absolute top-2.5 sm:top-3 right-4 sm:right-24 z-50">
-        <Avatar onClick={openProfileModal}>
+      <div className="absolute top-2.5 sm:top-3.5 right-4 sm:right-24 z-50 cursor-pointer">
+        <Avatar className="size-8" onClick={openProfileModal}>
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback>Profile</AvatarFallback>
         </Avatar>

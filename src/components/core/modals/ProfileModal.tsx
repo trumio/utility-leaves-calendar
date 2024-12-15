@@ -185,7 +185,7 @@ export default function ProfileModal(props: ProfileModalProps) {
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div className="p-4 sm:p-6">
+      <div className="p-4 sm:p-6 overflow-y-auto overflow-x-hidden max-h-[90vh]">
         <div className="mb-8 text-center">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Profile Settings</h1>
           <p className="mt-2 text-sm text-muted-foreground">Update your profile information for leave applications</p>
