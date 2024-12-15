@@ -10,50 +10,86 @@ export default function AdditionalInfoModal(props: AdditionalInfoModalProps) {
   if (!leavesDate) return null;
 
   return (
-    <GenericModal className="outline-none bg-white-creamy" isOpen={isOpen} onClose={onClose}>
-      <div className="px-10 py-6 max-h-[80vh] overflow-y-auto overflow-x-hidden">
-        <div className="py-4">
-          <h1 className="flex flex-row flex-wrap items-center gap-x-2 text-2xl font-semibold mb-2">
-            Leaves on {formatEpochToHumanReadable(dateToEpoch(leavesDate))}
-            <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400">
-              ({leaves && leaves.length} members)
-            </span>
-          </h1>
+    <GenericModal
+      className="w-full max-w-[90vw] sm:max-w-[600px] outline-none bg-white dark:bg-zinc-900"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <div className="p-4 sm:p-6 max-h-[80vh] overflow-y-auto overflow-x-hidden">
+        <div className="mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <h1 className="text-xl sm:text-2xl font-semibold">
+              Leaves on {formatEpochToHumanReadable(dateToEpoch(leavesDate))}
+            </h1>
+            {new Date().getDate() === leavesDate.getDate() &&
+              new Date().getMonth() === leavesDate.getMonth() &&
+              new Date().getFullYear() === leavesDate.getFullYear() && (
+                <span className="text-xs font-medium text-white bg-blue-500 px-2.5 py-1 rounded-full w-fit">Today</span>
+              )}
+          </div>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            {leaves.length} {leaves.length === 1 ? 'member' : 'members'} on leave
+          </p>
         </div>
-        <div className="flex flex-col gap-4">
+
+        <div className="space-y-3 sm:space-y-4">
           {leaves.length === 0 ? (
-            <div>
-              <h1 className="text-base font-medium">No leaves found</h1>
+            <div className="text-center py-6 sm:py-8 text-zinc-500 dark:text-zinc-400">
+              <p className="text-base">No leaves scheduled for this date</p>
             </div>
           ) : (
             leaves.map((leave: Leave) => (
-              <div key={leave.id} className="flex flex-col gap-1 shadow-card px-6 py-4 rounded-md">
-                <div className="flex flex-row items-center gap-x-4">
-                  <h1 className="text-base font-medium">{leave.name}</h1>
-                  <div className="flex flex-row items-center gap-x-2 text-sm font-normal">
-                    (
-                    {leave.startAt.getTime() === leave.endAt.getTime()
-                      ? formatEpochToHumanReadable(dateToEpoch(leave.startAt))
-                      : `${formatEpochToHumanReadable(dateToEpoch(leave.startAt))} - ${formatEpochToHumanReadable(dateToEpoch(leave.endAt))}`}
-                    )
-                  </div>
+              <div
+                key={leave.id}
+                className="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-3 sm:p-4"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-3">
+                  <h2 className="text-base sm:text-lg font-medium">{leave.name}</h2>
                   <div
-                    className="text-xs text-white rounded-md px-2 py-0.5"
+                    className="text-xs font-medium text-white px-3 py-1 rounded-full w-fit"
                     style={{ backgroundColor: stringToColour(leave.department) }}
                   >
                     {leave.department}
                   </div>
                 </div>
-                <div className="text-sm font-normal">{leave.role}</div>
-                <div className="text-sm font-normal whitespace-nowrap">Leave Type: {leave.leaveType}</div>
-                <div className="text-sm font-normal whitespace-nowrap">Leave Category: {leave.leaveCategory}</div>
-                <div className="text-sm">{leave.leaveReason}</div>
+
+                <div className="space-y-2 text-sm text-zinc-600 dark:text-zinc-300">
+                  <p className="font-medium text-zinc-900 dark:text-zinc-100">{leave.role}</p>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span className="text-zinc-500">Duration:</span>
+                    <span className="break-all sm:break-normal">
+                      {leave.startAt.getTime() === leave.endAt.getTime()
+                        ? formatEpochToHumanReadable(dateToEpoch(leave.startAt))
+                        : `${formatEpochToHumanReadable(dateToEpoch(leave.startAt))} - ${formatEpochToHumanReadable(dateToEpoch(leave.endAt))}`}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <span className="text-zinc-500">Type:</span> {leave.leaveType}
+                    </div>
+                    <div>
+                      <span className="text-zinc-500">Category:</span> {leave.leaveCategory}
+                    </div>
+                  </div>
+
+                  {leave.leaveReason && (
+                    <div className="pt-2 border-t border-zinc-100 dark:border-zinc-700">
+                      <p className="text-zinc-500 mb-1">Reason:</p>
+                      <p className="break-words">{leave.leaveReason}</p>
+                    </div>
+                  )}
+                </div>
               </div>
             ))
           )}
         </div>
-        <div className="flex justify-end mt-4">
-          <Button onClick={onClose}>Close</Button>
+
+        <div className="flex justify-end mt-4 sm:mt-6">
+          <Button onClick={onClose} className="w-full sm:w-auto px-6">
+            Close
+          </Button>
         </div>
       </div>
     </GenericModal>

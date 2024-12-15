@@ -60,7 +60,6 @@ export const monthsForLocale = (
   monthFormat: Intl.DateTimeFormatOptions['month'] = 'long',
 ) => {
   const format = new Intl.DateTimeFormat(localeName, { month: monthFormat }).format;
-
   return [...new Array(12).keys()].map((m) => format(new Date(Date.UTC(2021, m % 12))));
 };
 
@@ -82,20 +81,23 @@ const Combobox = ({ value, setValue, data, labels, className }: ComboboxProps) =
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" aria-expanded={open} className={cn('w-40 justify-between capitalize', className)}>
+        <Button
+          variant="outline"
+          aria-expanded={open}
+          className={cn('w-[120px] sm:w-40 justify-between capitalize text-sm', className)}
+        >
           {value ? data.find((item) => item.value === value)?.label : labels.button}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="ml-1 h-3 w-3 sm:h-4 sm:w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-40 p-0">
+      <PopoverContent className="w-[120px] sm:w-40 p-0">
         <Command
           filter={(value, search) => {
             const label = data.find((item) => item.value === value)?.label;
-
             return label?.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
           }}
         >
-          <CommandInput placeholder={labels.search} />
+          <CommandInput placeholder={labels.search} className="text-sm" />
           <CommandList>
             <CommandEmpty>{labels.empty}</CommandEmpty>
             <CommandGroup>
@@ -107,9 +109,11 @@ const Combobox = ({ value, setValue, data, labels, className }: ComboboxProps) =
                     setValue(currentValue === value ? '' : currentValue);
                     setOpen(false);
                   }}
-                  className="capitalize"
+                  className="capitalize text-sm"
                 >
-                  <Check className={cn('mr-2 h-4 w-4', value === item.value ? 'opacity-100' : 'opacity-0')} />
+                  <Check
+                    className={cn('mr-2 h-3 w-3 sm:h-4 sm:w-4', value === item.value ? 'opacity-100' : 'opacity-0')}
+                  />
                   {item.label}
                 </CommandItem>
               ))}
@@ -126,7 +130,7 @@ type OutOfBoundsDayProps = {
 };
 
 const OutOfBoundsDay = ({ day }: OutOfBoundsDayProps) => (
-  <div className="relative h-full w-full bg-zinc-100 p-1 text-zinc-500 text-xs dark:bg-zinc-800 dark:text-zinc-400">
+  <div className="relative h-full w-full bg-zinc-50/50 p-1 text-zinc-400 text-[10px] sm:text-xs dark:bg-zinc-800/50 dark:text-zinc-500">
     {day}
   </div>
 );
@@ -157,6 +161,7 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
   const closeModal = () => {
     setSelectedDate(null);
   };
+
   function getLeavesForDay(day: number): Leave[];
   function getLeavesForDay(day: Date): Leave[];
   function getLeavesForDay(day: number | Date): Leave[] {
@@ -171,7 +176,6 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
 
   for (let i = 0; i < firstDay; i++) {
     const day = prevMonthDaysArray[prevMonthDays - firstDay + i];
-
     if (day) {
       days.push(<OutOfBoundsDay key={`prev-${i}`} day={day} />);
     }
@@ -179,17 +183,39 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
 
   for (let day = 1; day <= daysInMonth; day++) {
     const leavesForDay = getLeavesForDay(day);
+    const isToday =
+      new Date().getDate() === day && new Date().getMonth() === month && new Date().getFullYear() === year;
 
     days.push(
       <div
         key={day}
-        className="relative flex h-full w-full flex-col gap-1 p-1 text-zinc-500 text-xs dark:text-zinc-400 hover:bg-white-creamy cursor-pointer"
+        className={cn(
+          'relative flex h-full w-full flex-col p-1.5 sm:p-3 text-xs sm:text-sm transition-colors',
+          'hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer',
+          isToday && 'bg-blue-50/50 dark:bg-blue-900/10',
+        )}
         onClick={() => openModal(new Date(year, month, day))}
       >
-        {day}
-        <div>{leavesForDay.slice(0, 3).map((leave) => children({ leave }))}</div>
-        {leavesForDay.length > 3 && (
-          <span className="block text-zinc-500 text-xs dark:text-zinc-400">+{leavesForDay.length - 3} more</span>
+        <div className="flex items-center justify-between mb-0.5 sm:mb-1">
+          <span
+            className={cn(
+              'font-medium',
+              isToday ? 'text-blue-600 dark:text-blue-400' : 'text-zinc-900 dark:text-zinc-100',
+            )}
+          >
+            {day}
+          </span>
+          {isToday && (
+            <span className="text-[8px] sm:text-[10px] font-medium text-blue-600 dark:text-blue-400">Today</span>
+          )}
+        </div>
+
+        <div className="space-y-0.5 sm:space-y-1">{leavesForDay.slice(0, 2).map((leave) => children({ leave }))}</div>
+
+        {leavesForDay.length > 2 && (
+          <span className="mt-0.5 sm:mt-1 block text-[8px] sm:text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
+            +{leavesForDay.length - 2} more
+          </span>
         )}
       </div>,
     );
@@ -204,7 +230,6 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
   if (remainingDays < 7) {
     for (let i = 0; i < remainingDays; i++) {
       const day = nextMonthDaysArray[i];
-
       if (day) {
         days.push(<OutOfBoundsDay key={`next-${i}`} day={day} />);
       }
@@ -212,23 +237,24 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
   }
 
   return (
-    <div className="grid flex-grow grid-cols-7">
+    <div className="grid flex-grow grid-cols-7 border-l border-zinc-200 dark:border-zinc-800">
       {days.map((day, index) => (
         <div
           key={index}
-          className={cn('relative aspect-square overflow-hidden border-t border-r', index % 7 === 6 && 'border-r-0')}
+          className={cn(
+            'relative aspect-square overflow-hidden border-t border-r border-zinc-200 dark:border-zinc-800',
+            index % 7 === 6 && 'border-r-0',
+          )}
         >
           {day}
         </div>
       ))}
-      {
-        <AdditionalInfoModal
-          leaves={selectedDate ? getLeavesForDay(selectedDate) : []}
-          leavesDate={selectedDate}
-          isOpen={!!selectedDate}
-          onClose={closeModal}
-        />
-      }
+      <AdditionalInfoModal
+        leaves={selectedDate ? getLeavesForDay(selectedDate) : []}
+        leavesDate={selectedDate}
+        isOpen={!!selectedDate}
+        onClose={closeModal}
+      />
     </div>
   );
 };
@@ -239,7 +265,7 @@ export type CalendarDatePickerProps = {
 };
 
 export const CalendarDatePicker = ({ className, children }: CalendarDatePickerProps) => (
-  <div className={cn('flex items-center gap-1', className)}>{children}</div>
+  <div className={cn('flex flex-wrap sm:flex-nowrap items-center gap-1 sm:gap-2', className)}>{children}</div>
 );
 
 export type CalendarMonthPickerProps = {
@@ -260,7 +286,7 @@ export const CalendarMonthPicker = ({ className }: CalendarMonthPickerProps) => 
         label: month,
       }))}
       labels={{
-        button: 'Select month',
+        button: 'Month',
         empty: 'No month found',
         search: 'Search month',
       }}
@@ -287,7 +313,7 @@ export const CalendarYearPicker = ({ className, start, end }: CalendarYearPicker
         label: (start + i).toString(),
       }))}
       labels={{
-        button: 'Select year',
+        button: 'Year',
         empty: 'No year found',
         search: 'Search year',
       }}
@@ -321,12 +347,12 @@ export const CalendarDatePagination = ({ className }: CalendarDatePaginationProp
   };
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
-      <Button onClick={() => handlePreviousMonth()} variant="ghost" size="icon">
-        <ChevronLeftIcon size={16} />
+    <div className={cn('flex items-center gap-1', className)}>
+      <Button onClick={handlePreviousMonth} variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
+        <ChevronLeftIcon className="h-4 w-4 sm:h-5 sm:w-5" />
       </Button>
-      <Button onClick={() => handleNextMonth()} variant="ghost" size="icon">
-        <ChevronRightIcon size={16} />
+      <Button onClick={handleNextMonth} variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
+        <ChevronRightIcon className="h-4 w-4 sm:h-5 sm:w-5" />
       </Button>
     </div>
   );
@@ -337,7 +363,7 @@ export type CalendarDateProps = {
 };
 
 export const CalendarDate = ({ children }: CalendarDateProps) => (
-  <div className="flex items-center justify-between p-3">{children}</div>
+  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2 sm:p-3">{children}</div>
 );
 
 export type CalendarHeaderProps = {
@@ -350,7 +376,10 @@ export const CalendarHeader = ({ className }: CalendarHeaderProps) => {
   return (
     <div className={cn('grid flex-grow grid-cols-7', className)}>
       {daysForLocale(locale, startDay).map((day) => (
-        <div key={day} className="p-3 text-right text-zinc-500 text-xs dark:text-zinc-400">
+        <div
+          key={day}
+          className="p-2 sm:p-3 text-center sm:text-right text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 font-medium"
+        >
           {day}
         </div>
       ))}
@@ -364,14 +393,30 @@ export type CalendarItemProps = {
 };
 
 export const CalendarItem = ({ leave, className }: CalendarItemProps) => (
-  <div className={cn('flex items-center gap-2', className)} key={leave.id}>
+  <div
+    className={cn(
+      'flex items-center gap-1 sm:gap-2 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-sm text-[10px] sm:text-xs font-medium',
+      'bg-white/50 dark:bg-zinc-800/50 hover:bg-white dark:hover:bg-zinc-800',
+      'border border-zinc-200/50 dark:border-zinc-700/50',
+      'transition-colors duration-200',
+      className,
+    )}
+    key={leave.id}
+  >
     <div
-      className="h-2 w-2 shrink-0 rounded-full"
+      className="hidden sm:block h-2 w-2 shrink-0 rounded-full"
       style={{
         backgroundColor: stringToColour(leave.department),
       }}
     />
-    <span className="truncate">{leave.name}</span>
+    <span
+      className="truncate text-zinc-700 dark:text-zinc-300 sm:text-inherit"
+      style={{
+        color: window.matchMedia('(max-width: 640px)').matches ? stringToColour(leave.department) : 'inherit',
+      }}
+    >
+      {leave.name}
+    </span>
   </div>
 );
 
@@ -384,6 +429,13 @@ export type CalendarProviderProps = {
 
 export const CalendarProvider = ({ locale = 'en-US', startDay = 0, children, className }: CalendarProviderProps) => (
   <CalendarContext.Provider value={{ locale, startDay }}>
-    <div className={cn('relative flex flex-col', className)}>{children}</div>
+    <div
+      className={cn(
+        'relative flex flex-col rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900',
+        className,
+      )}
+    >
+      {children}
+    </div>
   </CalendarContext.Provider>
 );
