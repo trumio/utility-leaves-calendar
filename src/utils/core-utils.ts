@@ -1,6 +1,5 @@
 import { ToastType } from '@/constraints/enums/core-enums';
 import { toast, ToastPosition } from 'react-hot-toast';
-import { DateTime } from 'luxon';
 import { dateToEpoch, formatEpochToHumanReadable } from '@/utils/date-utils';
 
 export const showToast = (type: ToastType, message: string) => {
