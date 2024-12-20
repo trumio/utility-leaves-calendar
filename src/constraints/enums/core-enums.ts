@@ -10,3 +10,8 @@ export enum LeaveCategory {
   ParentalLeave = 'Parental Leave',
   Other = 'Other',
 }
+
+export enum ToastType {
+  Success = 'success',
+  Error = 'error',
+}

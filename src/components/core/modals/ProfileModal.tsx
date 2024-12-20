@@ -12,6 +12,9 @@ import { cn } from '@/lib/utils';
 import { DateTime } from 'luxon';
 import { CalendarIcon, UserCircle, Mail, Building2, UserRound, CalendarDays, FileText, Clock, Tag } from 'lucide-react';
 import GenericModal from './GenericModal';
+import { applyLeave } from '@/services/leaves-service';
+import { showToast } from '@/utils/core-utils';
+import { ToastType } from '@/constraints/enums/core-enums';
 
 enum Department {
   Engineering = 'Engineering',
@@ -81,22 +84,29 @@ export default function ProfileModal(props: ProfileModalProps) {
   const { isOpen, onClose, onLogout } = props;
   const [showCustomDepartment, setShowCustomDepartment] = useState(false);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Load initial values from localStorage
+  const savedProfile = localStorage.getItem('userProfile');
+  const initialValues = savedProfile
+    ? JSON.parse(savedProfile)
+    : {
+        name: '',
+        email: '',
+        department: '',
+        customDepartment: '',
+        role: '',
+        leaveStartDate: undefined,
+        leaveEndDate: undefined,
+        reasonForLeave: '',
+        leaveType: '',
+        leaveCategory: '',
+        customCategory: '',
+      };
 
   const form = useForm<FormData>({
     resolver: yupResolver(formSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      department: '',
-      customDepartment: '',
-      role: '',
-      leaveStartDate: undefined,
-      leaveEndDate: undefined,
-      reasonForLeave: '',
-      leaveType: '',
-      leaveCategory: '',
-      customCategory: '',
-    },
+    defaultValues: initialValues,
     mode: 'onChange',
   });
 
@@ -150,9 +160,40 @@ export default function ProfileModal(props: ProfileModalProps) {
     }
   }, [form.watch('leaveStartDate'), form.watch('leaveEndDate')]);
 
-  function onSubmit(data: FormData) {
-    console.log('Form submitted:', data);
-    onClose();
+  async function onSubmit(data: FormData) {
+    const username = localStorage.getItem('username');
+    const password = localStorage.getItem('password');
+
+    if (!username || !password) {
+      throw new Error('No username or password found');
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      await applyLeave(username, password, {
+        name: data.name,
+        email: data.email,
+        department: data.department,
+        customDepartment: data.customDepartment,
+        role: data.role,
+        leaveStartDate: data.leaveStartDate,
+        leaveEndDate: data.leaveEndDate,
+        reasonForLeave: data.reasonForLeave,
+        leaveType: data.leaveType || '',
+        leaveCategory: data.leaveCategory,
+        customCategory: data.customCategory,
+      });
+
+      showToast(ToastType.Success, 'Leave application submitted successfully');
+
+      resetForm();
+      onClose();
+    } catch (error) {
+      showToast(ToastType.Error, 'Error submitting leave');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function resetForm() {
@@ -501,8 +542,8 @@ export default function ProfileModal(props: ProfileModalProps) {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              <Button type="submit" className="flex-1" disabled={!isValid}>
-                Apply Leaves
+              <Button type="submit" className="flex-1" disabled={!isValid || isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Apply Leaves'}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
                 Reset Form

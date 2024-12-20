@@ -1,5 +1,6 @@
 import Home from '@/components/pages/Home';
 import AccessWrapper from './components/core/AccessWrapper';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
@@ -7,6 +8,7 @@ function App() {
       <AccessWrapper>
         <Home />
       </AccessWrapper>
+      <Toaster />
     </div>
   );
 }
