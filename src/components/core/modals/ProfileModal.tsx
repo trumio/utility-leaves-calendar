@@ -19,9 +19,11 @@ import { ToastType } from '@/constraints/enums/core-enums';
 enum Department {
   Engineering = 'Engineering',
   Marketing = 'Marketing',
-  Sales = 'Sales',
-  Finance = 'Finance',
-  HR = 'HR',
+  Design = 'Design',
+  QA = 'QA',
+  Operations = 'Operations',
+  Product = 'Product',
+  Project = 'Project',
   Other = 'Other',
 }
 
@@ -33,11 +35,13 @@ enum LeaveType {
 }
 
 enum LeaveCategory {
-  Vacation = 'Vacation',
-  SickLeave = 'Sick Leave',
   PersonalLeave = 'Personal Leave',
-  WorkFromHome = 'Work From Home',
-  Other = 'Other',
+  SickLeave = 'Sick Leave',
+  MaternityLeave = 'Maternity Leave',
+  PaternityLeave = 'Paternity Leave',
+  BereavementLeave = 'Bereavement Leave',
+  FestivalDay = 'Festival Day',
+  ExamAssessment = 'Exam/Assessment Leave',
 }
 
 const departments = Object.values(Department);
@@ -71,11 +75,11 @@ const formSchema = yup.object({
     otherwise: (schema) => schema.notRequired(),
   }),
   leaveCategory: yup.string().required('Leave category is required'),
-  customCategory: yup.string().when('leaveCategory', {
-    is: LeaveCategory.Other,
-    then: (schema) => schema.required('Custom category is required'),
-    otherwise: (schema) => schema.notRequired(),
-  }),
+  // customCategory: yup.string().when('leaveCategory', {
+  //   is: LeaveCategory.Other,
+  //   then: (schema) => schema.required('Custom category is required'),
+  //   otherwise: (schema) => schema.notRequired(),
+  // }),
 });
 
 type FormData = yup.InferType<typeof formSchema>;
@@ -83,7 +87,7 @@ type FormData = yup.InferType<typeof formSchema>;
 export default function ProfileModal(props: ProfileModalProps) {
   const { isOpen, onClose, onLogout } = props;
   const [showCustomDepartment, setShowCustomDepartment] = useState(false);
-  const [showCustomCategory, setShowCustomCategory] = useState(false);
+  // const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load initial values from localStorage
@@ -182,7 +186,7 @@ export default function ProfileModal(props: ProfileModalProps) {
         reasonForLeave: data.reasonForLeave,
         leaveType: data.leaveType || '',
         leaveCategory: data.leaveCategory,
-        customCategory: data.customCategory,
+        // customCategory: data.customCategory,
       });
 
       showToast(ToastType.Success, 'Leave application submitted successfully');
@@ -213,7 +217,7 @@ export default function ProfileModal(props: ProfileModalProps) {
     } else {
       form.reset();
     }
-    setShowCustomCategory(false);
+    // setShowCustomCategory(false);
   }
 
   const startDate = form.getValues('leaveStartDate');
@@ -375,7 +379,12 @@ export default function ProfileModal(props: ProfileModalProps) {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date < new Date()}
+                            disabled={(date) => {
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              date.setHours(0, 0, 0, 0);
+                              return date < today;
+                            }}
                             initialFocus
                             className="rounded-md border"
                           />
@@ -421,7 +430,10 @@ export default function ProfileModal(props: ProfileModalProps) {
                             onSelect={field.onChange}
                             disabled={(date) => {
                               const startDate = form.getValues('leaveStartDate');
-                              return date < new Date() || (startDate && date < startDate);
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              date.setHours(0, 0, 0, 0);
+                              return date < today || (startDate && date < startDate);
                             }}
                             initialFocus
                             className="rounded-md border"
@@ -502,7 +514,7 @@ export default function ProfileModal(props: ProfileModalProps) {
                       <Select
                         onValueChange={(value) => {
                           field.onChange(value);
-                          setShowCustomCategory(value === LeaveCategory.Other);
+                          // setShowCustomCategory(value === LeaveCategory.Other);
                         }}
                         value={field.value}
                       >
@@ -525,7 +537,7 @@ export default function ProfileModal(props: ProfileModalProps) {
                 />
               </div>
 
-              {showCustomCategory && (
+              {/*showCustomCategory && (
                 <FormField
                   control={form.control}
                   name="customCategory"
@@ -538,7 +550,7 @@ export default function ProfileModal(props: ProfileModalProps) {
                     </FormItem>
                   )}
                 />
-              )}
+              )*/}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
