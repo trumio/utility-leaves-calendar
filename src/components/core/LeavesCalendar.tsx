@@ -18,7 +18,7 @@ import { useCoreStore } from '@/stores/core-store';
 
 const LeavesCalendar: FC = () => {
   const leaves = useCoreStore((state) => state.leaves);
-  const holidays = useCoreStore((state) => state.holidays);
+  // const holidays = useCoreStore((state) => state.holidays);
   const isLeavesLoading = useCoreStore((state) => state.isLeavesLoading);
   const isHolidaysLoading = useCoreStore((state) => state.isHolidaysLoading);
   const populateLeaves = useCoreStore((state) => state.populateLeaves);
