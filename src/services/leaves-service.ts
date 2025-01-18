@@ -1,8 +1,9 @@
 import { LEAVES_API_URL } from '@/static/api';
 import axios from 'axios';
-import { Leave } from '@/constraints/types/core-types';
+import { Leave, PublicHoliday } from '@/constraints/types/core-types';
 import { DateTime } from 'luxon';
 import { generateAdaptiveCard } from '@/utils/core-utils';
+import { parseHolidays, parseLeaves } from '@/utils/parsing-utils';
 
 type LeaveFormData = {
   name: string;
@@ -42,21 +43,44 @@ export const getLeaves = async (username: string, password: string): Promise<Lea
       data,
     });
 
-    const formattedLeaves = response.data.data.map((rawLeave: any, index: number) => ({
-      id: index,
-      name: rawLeave.name,
-      department: rawLeave.department,
-      role: rawLeave.role,
-      leaveReason: rawLeave['reason for leave'],
-      leaveType: rawLeave['leave type'],
-      leaveCategory: rawLeave['leave category'],
-      startAt: new Date(rawLeave['leave start date']),
-      endAt: new Date(rawLeave['leave end date']),
-    }));
+    const formattedLeaves = parseLeaves(response.data.data);
 
     return formattedLeaves;
   } catch (error) {
     console.error('Error fetching leaves:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches public holidays data from the API endpoint
+ * @returns Promise containing the holidays data response
+ * @throws Error if the API request fails
+ */
+export const getHolidays = async (username: string, password: string): Promise<PublicHoliday[]> => {
+  try {
+    const data = new URLSearchParams({
+      sheetName: 'Holidays',
+      requestType: 'GET',
+      username: username,
+      password: password,
+    });
+
+    const response = await axios({
+      method: 'post',
+      url: LEAVES_API_URL,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+      },
+      data,
+    });
+
+    const holidays = parseHolidays(response.data.data);
+
+    return holidays;
+  } catch (error) {
+    console.error('Error fetching holidays:', error);
     throw error;
   }
 };

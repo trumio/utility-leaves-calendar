@@ -1,6 +1,16 @@
 import { ToastType } from '@/constraints/enums/core-enums';
 import { toast, ToastPosition } from 'react-hot-toast';
 import { dateToEpoch, formatEpochToHumanReadable } from '@/utils/date-utils';
+import { Leave, PublicHoliday } from '@/constraints/types/core-types';
+
+export const isHoliday = (date: Date, holidays: PublicHoliday[]): string | undefined => {
+  const holiday = holidays.find((holiday) => {
+    const holidayStart = new Date(holiday.startDate);
+    const holidayEnd = new Date(holiday.endDate);
+    return date >= holidayStart && date <= holidayEnd;
+  });
+  return holiday?.name;
+};
 
 export const showToast = (type: ToastType, message: string) => {
   const options = {

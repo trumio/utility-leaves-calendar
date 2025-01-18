@@ -15,6 +15,7 @@ import GenericModal from './GenericModal';
 import { applyLeave } from '@/services/leaves-service';
 import { showToast } from '@/utils/core-utils';
 import { ToastType } from '@/constraints/enums/core-enums';
+import { useCoreStore } from '@/stores/core-store';
 
 enum Department {
   Engineering = 'Engineering',
@@ -89,6 +90,7 @@ export default function ProfileModal(props: ProfileModalProps) {
   const [showCustomDepartment, setShowCustomDepartment] = useState(false);
   // const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { populateLeaves } = useCoreStore();
 
   // Load initial values from localStorage
   const savedProfile = localStorage.getItem('userProfile');
@@ -188,6 +190,8 @@ export default function ProfileModal(props: ProfileModalProps) {
         leaveCategory: data.leaveCategory,
         // customCategory: data.customCategory,
       });
+
+      populateLeaves(username, password, true);
 
       showToast(ToastType.Success, 'Leave application submitted successfully');
 
@@ -554,14 +558,14 @@ export default function ProfileModal(props: ProfileModalProps) {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              <Button type="submit" className="flex-1" disabled={!isValid || isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Apply Leaves'}
+              <Button type="button" variant="destructive" onClick={onLogout} className="flex-1">
+                Logout
               </Button>
               <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
                 Reset Form
               </Button>
-              <Button type="button" variant="destructive" onClick={onLogout} className="flex-1">
-                Logout
+              <Button type="submit" className="flex-1" disabled={!isValid || isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Apply Leaves'}
               </Button>
             </div>
           </form>

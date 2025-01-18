@@ -10,6 +10,22 @@ export type Leave = {
   leaveReason: string;
   leaveType: LeaveType;
   leaveCategory: LeaveCategory;
-  startAt: Date;
-  endAt: Date;
+  startDate: Date;
+  endDate: Date;
+};
+
+export type PublicHoliday = {
+  id: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+};
+
+export type CoreStore = {
+  isLeavesLoading: boolean;
+  isHolidaysLoading: boolean;
+  leaves: Leave[];
+  holidays: PublicHoliday[];
+  populateLeaves: (username: string, password: string, force?: boolean) => Promise<void>;
+  populateHolidays: (username: string, password: string, force?: boolean) => Promise<void>;
 };

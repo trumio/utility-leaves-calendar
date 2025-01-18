@@ -5,7 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { getDay, getDaysInMonth } from 'date-fns';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, Gift } from 'lucide-react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { type ReactNode, createContext, useContext, useState } from 'react';
 import { create } from 'zustand';
@@ -13,6 +13,8 @@ import { devtools } from 'zustand/middleware';
 import AdditionalInfoModal from '../core/modals/AdditionalInfoModal';
 import { stringToColour } from '@/utils/miscellaneous-utils';
 import { Leave } from '@/constraints/types/core-types';
+import { isHoliday } from '@/utils/core-utils';
+import { useCoreStore } from '@/stores/core-store';
 
 export type CalendarState = {
   month: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
@@ -154,6 +156,8 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
   const prevMonthDays = getDaysInMonth(new Date(prevMonthYear, prevMonth, 1));
   const prevMonthDaysArray = Array.from({ length: prevMonthDays }, (_, i) => i + 1);
 
+  const holidays = useCoreStore((state) => state.holidays);
+
   const openModal = (date: Date) => {
     setSelectedDate(date);
   };
@@ -168,8 +172,8 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
     const targetDate = typeof day === 'number' ? new Date(year, month, day) : day;
 
     return leaves.filter((leave) => {
-      const leaveStart = new Date(leave.startAt);
-      const leaveEnd = new Date(leave.endAt);
+      const leaveStart = new Date(leave.startDate);
+      const leaveEnd = new Date(leave.endDate);
       return targetDate >= leaveStart && targetDate <= leaveEnd;
     });
   }
@@ -185,6 +189,7 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
     const leavesForDay = getLeavesForDay(day);
     const isToday =
       new Date().getDate() === day && new Date().getMonth() === month && new Date().getFullYear() === year;
+    const holidayName = isHoliday(new Date(year, month, day), holidays);
 
     days.push(
       <div
@@ -210,14 +215,28 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
           )}
         </div>
 
-        <div className="space-y-0.5 sm:space-y-1">{leavesForDay.slice(0, 2).map((leave) => children({ leave }))}</div>
+        {holidayName && (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full bg-gradient-to-br from-amber-100/90 via-amber-50/80 to-amber-100/90 dark:from-amber-900/30 dark:via-amber-800/25 dark:to-amber-900/30 px-2 py-2 rounded-lg border border-amber-200/60 dark:border-amber-700/40 shadow-sm">
+              <div className="flex items-center justify-center gap-1 text-[8px] sm:text-[10px] uppercase tracking-wider font-semibold text-amber-600/90 dark:text-amber-400/90 text-center mb-0.5">
+                <Gift size={12} className="text-amber-600/90 dark:text-amber-400/90" />
+                Holiday
+              </div>
+              <div className="text-[9px] sm:text-[11px] font-medium text-amber-800 dark:text-amber-200 text-center leading-tight">
+                {holidayName}
+              </div>
+            </div>
+          </div>
+        )}
 
-        {leavesForDay.length > 2 && (
+        {!holidayName && <div className="space-y-0.5 sm:space-y-1">{leavesForDay.slice(0, 2).map((leave) => children({ leave }))}</div>}
+
+        {!holidayName && leavesForDay.length > 2 && (
           <span className="mt-0.5 sm:mt-1 block text-[8px] sm:text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
             +{leavesForDay.length - 2} more
           </span>
         )}
-      </div>,
+      </div>
     );
   }
 
