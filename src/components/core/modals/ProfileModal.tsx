@@ -234,8 +234,6 @@ export default function ProfileModal(props: ProfileModalProps) {
     }
   }, [startDate, endDate, form]);
 
-  console.log(form.formState.errors);
-
   return (
     <GenericModal
       className="w-full max-w-[90vw] sm:max-w-[500px] outline-none bg-white dark:bg-zinc-900"
