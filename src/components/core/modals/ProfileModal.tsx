@@ -228,6 +228,14 @@ export default function ProfileModal(props: ProfileModalProps) {
   const endDate = form.getValues('leaveEndDate');
   const isSameDay = startDate && endDate && DateTime.fromJSDate(startDate).hasSame(DateTime.fromJSDate(endDate), 'day');
 
+  useEffect(() => {
+    if (startDate && endDate && startDate > endDate) {
+      form.setValue('leaveEndDate', startDate);
+    }
+  }, [startDate, endDate, form]);
+
+  console.log(form.formState.errors)
+
   return (
     <GenericModal
       className="w-full max-w-[90vw] sm:max-w-[500px] outline-none bg-white dark:bg-zinc-900"
@@ -409,7 +417,7 @@ export default function ProfileModal(props: ProfileModalProps) {
                         End Date
                       </FormLabel>
                       <Popover>
-                        <PopoverTrigger asChild>
+                        <PopoverTrigger asChild disabled={!startDate}>
                           <FormControl>
                             <Button
                               variant="outline"
@@ -434,9 +442,9 @@ export default function ProfileModal(props: ProfileModalProps) {
                             onSelect={field.onChange}
                             disabled={(date) => {
                               const startDate = form.getValues('leaveStartDate');
-                              const today = new Date();
-                              today.setHours(0, 0, 0, 0);
-                              date.setHours(0, 0, 0, 0);
+                              // const today = new Date();
+                              // today.setHours(0, 0, 0, 0);
+                              // date.setHours(0, 0, 0, 0);
                               return startDate && date < startDate;
                             }}
                             initialFocus
