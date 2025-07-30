@@ -7,6 +7,8 @@ export const useCoreStore = create<CoreStore>((set, get) => ({
   isHolidaysLoading: false,
   leaves: [],
   holidays: [],
-  populateLeaves: (username: string, password: string, force?: boolean) => populateLeaves(username, password, set, get, force),
-  populateHolidays: (username: string, password: string, force?: boolean) => populateHolidays(username, password, set, get, force),
+  populateLeaves: (username: string, password: string, force?: boolean) =>
+    populateLeaves(username, password, set, get, force),
+  populateHolidays: (username: string, password: string, force?: boolean) =>
+    populateHolidays(username, password, set, get, force),
 }));

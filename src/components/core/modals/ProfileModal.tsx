@@ -437,7 +437,7 @@ export default function ProfileModal(props: ProfileModalProps) {
                               const today = new Date();
                               today.setHours(0, 0, 0, 0);
                               date.setHours(0, 0, 0, 0);
-                              return (startDate && date < startDate);
+                              return startDate && date < startDate;
                             }}
                             initialFocus
                             className="rounded-md border"

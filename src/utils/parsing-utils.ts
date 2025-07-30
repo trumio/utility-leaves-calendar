@@ -1,5 +1,5 @@
-import { Leave, PublicHoliday } from "@/constraints/types/core-types";
-import { DateTime } from "luxon";
+import { Leave, PublicHoliday } from '@/constraints/types/core-types';
+import { DateTime } from 'luxon';
 
 export const parseLeaves = (leaves: any[]): Leave[] => {
   return leaves.map((leave, index: number) => ({
@@ -8,7 +8,7 @@ export const parseLeaves = (leaves: any[]): Leave[] => {
     department: leave.department,
     role: leave.role,
     leaveReason: leave['reason for leave'],
-    leaveType: leave['leave type'], 
+    leaveType: leave['leave type'],
     leaveCategory: leave['leave category'],
     startDate: DateTime.fromISO(leave['leave start date']).toJSDate(),
     endDate: DateTime.fromISO(leave['leave end date']).toJSDate(),

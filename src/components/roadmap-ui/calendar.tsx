@@ -229,14 +229,16 @@ export const CalendarBody = ({ leaves, children }: CalendarBodyProps) => {
           </div>
         )}
 
-        {!holidayName && <div className="space-y-0.5 sm:space-y-1">{leavesForDay.slice(0, 2).map((leave) => children({ leave }))}</div>}
+        {!holidayName && (
+          <div className="space-y-0.5 sm:space-y-1">{leavesForDay.slice(0, 2).map((leave) => children({ leave }))}</div>
+        )}
 
         {!holidayName && leavesForDay.length > 2 && (
           <span className="mt-0.5 sm:mt-1 block text-[8px] sm:text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
             +{leavesForDay.length - 2} more
           </span>
         )}
-      </div>
+      </div>,
     );
   }
 

@@ -40,11 +40,11 @@ const LeavesCalendar: FC = () => {
     const fetchLeaves = async () => {
       const username = localStorage.getItem('username');
       const password = localStorage.getItem('password');
-  
+
       if (!username || !password) {
         throw new Error('No username or password found');
       }
-  
+
       try {
         populateLeaves(username, password);
         populateHolidays(username, password);
