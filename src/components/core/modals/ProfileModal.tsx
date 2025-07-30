@@ -234,7 +234,7 @@ export default function ProfileModal(props: ProfileModalProps) {
     }
   }, [startDate, endDate, form]);
 
-  console.log(form.formState.errors)
+  console.log(form.formState.errors);
 
   return (
     <GenericModal
