@@ -48,13 +48,14 @@ export function epochDifferenceInDays(epoch1: number, epoch2: number): number {
 export function addDaysToEpoch(epoch: number, days: number): number {
   return DateTime.fromMillis(epoch).plus({ days }).toMillis();
 }
+
 /**
- * Converts epoch time to a human-readable date format.
+ * Converts epoch time to a human-readable date format with ordinal suffixes (st, nd, rd, th).
  * @param epoch - The epoch time in milliseconds since 1970-01-01.
- * @param truncateYear - Optional. If true, displays year in 2-digit format. Default is false.
+ * @param truncateYear - Optional. If true, displays year in 2-digit format with a leading apostrophe. Default is false.
  * @param includeTime - Optional. If true, includes time in the output. Default is false.
  * @param timezone - Optional. IANA timezone string. If not provided, uses local timezone.
- * @returns A formatted date string (e.g., "Sep 30, 2024" or "Sep 30, 24" if truncateYear is true).
+ * @returns A formatted date string (e.g., "Sep 30th, 2024" or "Sep 30th, '24" if truncateYear is true).
  * @throws {TypeError} If epoch is not a number.
  */
 export function formatEpochToHumanReadable(
@@ -69,11 +70,35 @@ export function formatEpochToHumanReadable(
 
   const dt = timezone ? DateTime.fromMillis(epoch).setZone(timezone) : DateTime.fromMillis(epoch);
 
-  const format = includeTime
-    ? `MMM d, ${truncateYear ? 'yy' : 'yyyy'}, hh:mm a`
-    : `MMM d, ${truncateYear ? 'yy' : 'yyyy'}`;
+  // Helper to get ordinal suffix
+  function getOrdinalSuffix(day: number): string {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  }
 
-  return dt.toFormat(format);
+  const day = dt.day;
+  const ordinal = getOrdinalSuffix(day);
+  const month = dt.toFormat('MMM');
+  let year: string;
+  if (truncateYear) {
+    year = `'${dt.toFormat('yy')}`;
+  } else {
+    year = dt.toFormat('yyyy');
+  }
+
+  let dateStr = `${day}${ordinal} ${month}, ${year}`;
+
+  if (includeTime) {
+    const timeStr = dt.toFormat('hh:mm a');
+    dateStr += `, ${timeStr}`;
+  }
+
+  return dateStr;
 }
 
 /**

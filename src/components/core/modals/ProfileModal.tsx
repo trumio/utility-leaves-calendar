@@ -383,12 +383,12 @@ export default function ProfileModal(props: ProfileModalProps) {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => {
-                              const today = new Date();
-                              today.setHours(0, 0, 0, 0);
-                              date.setHours(0, 0, 0, 0);
-                              return date < today;
-                            }}
+                            // disabled={(date) => {
+                            //   const today = new Date();
+                            //   today.setHours(0, 0, 0, 0);
+                            //   date.setHours(0, 0, 0, 0);
+                            //   return date < today;
+                            // }}
                             initialFocus
                             className="rounded-md border"
                           />
@@ -437,7 +437,7 @@ export default function ProfileModal(props: ProfileModalProps) {
                               const today = new Date();
                               today.setHours(0, 0, 0, 0);
                               date.setHours(0, 0, 0, 0);
-                              return date < today || (startDate && date < startDate);
+                              return (startDate && date < startDate);
                             }}
                             initialFocus
                             className="rounded-md border"

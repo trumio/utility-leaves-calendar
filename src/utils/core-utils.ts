@@ -29,8 +29,8 @@ export const showToast = (type: ToastType, message: string) => {
 };
 
 export const generateAdaptiveCard = (formData: any) => {
-  const startDate = formatEpochToHumanReadable(dateToEpoch(formData.leaveStartDate));
-  const endDate = formatEpochToHumanReadable(dateToEpoch(formData.leaveEndDate));
+  const startDate = formatEpochToHumanReadable(dateToEpoch(formData.leaveStartDate), true);
+  const endDate = formatEpochToHumanReadable(dateToEpoch(formData.leaveEndDate), true);
 
   return {
     $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
@@ -39,7 +39,7 @@ export const generateAdaptiveCard = (formData: any) => {
     body: [
       {
         type: 'TextBlock',
-        text: `Leave on ${startDate}`,
+        text: `${formData.name} | ${startDate}${endDate !== startDate ? ` - ${endDate}` : ''} | ${formData.leaveType}`,
         weight: 'bolder',
         size: 'large',
         spacing: 'medium',
