@@ -5,6 +5,7 @@ import { create } from 'zustand';
 export const useCoreStore = create<CoreStore>((set, get) => ({
   isLeavesLoading: false,
   isHolidaysLoading: false,
+  error: undefined,
   leaves: [],
   holidays: [],
   populateLeaves: (username: string, password: string, force?: boolean) =>

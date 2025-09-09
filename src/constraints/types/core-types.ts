@@ -1,4 +1,4 @@
-import { LeaveType } from '../enums/core-enums';
+import { LeaveType, ResponseError } from '../enums/core-enums';
 
 import { LeaveCategory } from '../enums/core-enums';
 
@@ -24,6 +24,7 @@ export type PublicHoliday = {
 export type CoreStore = {
   isLeavesLoading: boolean;
   isHolidaysLoading: boolean;
+  error?: ResponseError;
   leaves: Leave[];
   holidays: PublicHoliday[];
   populateLeaves: (username: string, password: string, force?: boolean) => Promise<void>;

@@ -43,6 +43,8 @@ export const getLeaves = async (username: string, password: string): Promise<Lea
       data,
     });
 
+    if (!response?.data?.success) throw new Error(response?.data?.error);
+
     const formattedLeaves = parseLeaves(response.data.data);
 
     return formattedLeaves;

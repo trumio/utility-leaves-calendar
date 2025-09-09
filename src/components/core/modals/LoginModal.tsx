@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import GenericModal from './GenericModal';
+import { useCoreStore } from '@/stores/core-store';
 
 const formSchema = yup.object({
   username: yup.string().required('Username is required'),
@@ -15,6 +16,7 @@ type FormData = yup.InferType<typeof formSchema>;
 
 export default function LoginModal(props: LoginModalProps) {
   const { isOpen, onLogin } = props;
+  const error = useCoreStore((state) => state.error);
   const form = useForm<FormData>({
     resolver: yupResolver(formSchema),
     defaultValues: {
@@ -31,6 +33,7 @@ export default function LoginModal(props: LoginModalProps) {
     <GenericModal className="px-8 py-6" isOpen={isOpen}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {error && <div className="text-center text-sm text-red-500">{error}</div>}
           <FormField
             control={form.control}
             name="username"

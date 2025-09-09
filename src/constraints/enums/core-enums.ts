@@ -15,3 +15,7 @@ export enum ToastType {
   Success = 'success',
   Error = 'error',
 }
+
+export enum ResponseError {
+  InvalidCredentials = 'Error: Invalid credentials',
+}

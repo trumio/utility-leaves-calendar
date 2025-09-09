@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Login from '../pages/Login';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import ProfileModal from './modals/ProfileModal';
+import { useCoreStore } from '@/stores/core-store';
+import { ResponseError } from '@/constraints/enums/core-enums';
 
 export default function AccessWrapper(props: AccessWrapperProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-
+  const error = useCoreStore((state) => state.error);
   const allowAccess = () => {
     setIsAuthenticated(true);
   };
@@ -33,7 +35,7 @@ export default function AccessWrapper(props: AccessWrapperProps) {
     }
   }, []);
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || error === ResponseError.InvalidCredentials) {
     return <Login onLogin={allowAccess} />;
   }
 

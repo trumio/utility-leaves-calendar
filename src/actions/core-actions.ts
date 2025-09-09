@@ -1,3 +1,4 @@
+import { ResponseError } from '@/constraints/enums/core-enums';
 import { CoreStore } from '@/constraints/types/core-types';
 import { getLeaves, getHolidays } from '@/services/leaves-service';
 
@@ -10,8 +11,12 @@ export const populateLeaves = async (
 ) => {
   if (!force && get().leaves.length > 0) return;
   set({ isLeavesLoading: true });
-  const leaves = await getLeaves(username, password);
-  set({ leaves, isLeavesLoading: false });
+  try {
+    const leaves = await getLeaves(username, password);
+    set({ leaves, isLeavesLoading: false });
+  } catch (error: unknown) {
+    set({ error: (error as { message: ResponseError }).message as ResponseError, isLeavesLoading: false });
+  }
 };
 
 export const populateHolidays = async (
