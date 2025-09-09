@@ -29,4 +29,5 @@ export type CoreStore = {
   holidays: PublicHoliday[];
   populateLeaves: (username: string, password: string, force?: boolean) => Promise<void>;
   populateHolidays: (username: string, password: string, force?: boolean) => Promise<void>;
+  resetStore: () => void;
 };

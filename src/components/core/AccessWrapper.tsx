@@ -9,6 +9,8 @@ export default function AccessWrapper(props: AccessWrapperProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const error = useCoreStore((state) => state.error);
+  const resetStore = useCoreStore((state) => state.resetStore);
+
   const allowAccess = () => {
     setIsAuthenticated(true);
   };
@@ -16,6 +18,8 @@ export default function AccessWrapper(props: AccessWrapperProps) {
   const logout = () => {
     localStorage.clear();
     setIsAuthenticated(false);
+    closeProfileModal();
+    resetStore();
   };
 
   const openProfileModal = () => {
