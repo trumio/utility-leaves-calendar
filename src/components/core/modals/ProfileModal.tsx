@@ -38,11 +38,11 @@ enum LeaveType {
 enum LeaveCategory {
   PersonalLeave = 'Personal Leave',
   SickLeave = 'Sick Leave',
-  MaternityLeave = 'Maternity Leave',
-  PaternityLeave = 'Paternity Leave',
-  BereavementLeave = 'Bereavement Leave',
+  // MaternityLeave = 'Maternity Leave',
+  // PaternityLeave = 'Paternity Leave',
+  // BereavementLeave = 'Bereavement Leave',
   FestivalDay = 'Festival Day',
-  ExamAssessment = 'Exam/Assessment Leave',
+  // ExamAssessment = 'Exam/Assessment Leave',
 }
 
 const departments = Object.values(Department);
